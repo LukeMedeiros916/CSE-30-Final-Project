@@ -28,17 +28,19 @@ inline std::ostream &operator<<(std::ostream &os, Vertex *v) {
 struct Edge {
     Vertex *from;
     Vertex *to;
-    int weight;
+    int price;
+    int duration;
 
-    Edge(Vertex *from, Vertex *to, int weight) {
+    Edge(Vertex *from, Vertex *to, int price, int duration) {
         this->from = from;
         this->to = to;
-        this->weight = weight;
+        this->price = price;
+        this->duration = duration;
     }
 };
 
 inline std::ostream &operator<<(std::ostream &os, Edge *e) {
-    os << "(" << e->from << ", " << e->to << ") - " << e->weight;
+    os << "(" << e->from->data << "-> " << e->to->data << ") $ " << e->price << ", " << e->duration << "m";
 
     return os;
 }
@@ -84,9 +86,9 @@ struct Graph {
 
     void addVertex(Vertex *v) { vertices.append(v); }
 
-    void addEdge(Vertex *x, Vertex *y, int w) {
-        x->edgeList.append(new Edge(x, y, w));
-        y->edgeList.append(new Edge(y, x, w));
+    void addEdge(Vertex *x, Vertex *y, int price, int duration) {
+        x->edgeList.append(new Edge(x, y, price, duration));
+        y->edgeList.append(new Edge(y, x, price, duration));
     }
 
     void addDirectedEdge(Vertex *x, Vertex *y, int w) {
