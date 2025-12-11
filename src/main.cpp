@@ -1,51 +1,43 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <Graph.h>
 
 using namespace std;
 
 
+Vertex* findVertex(Graph& g, string name) {
+    for(int i=0; i<g.vertices.size(); i++) {
+        if(g.vertices[i]->data == name) return g.vertices[i];
+    }
+    retuen nullptr;
+}
+
+void loadGraph(Graph &g) {
+    ifstream airportFile("data/airports.txt");
+    string code, name_part, line;
+
+    while (getline(airportFile, line)) {
+        stringstream ss(line);
+        ss >> code;
+        Vertex* v = new Vertex(code);
+        g.addVertex(v);
+    }
+
+    ifstream flightFile('data/flights.txt');
+    string from, to;
+    int price, duration;
+
+    while (flightFile >> from >> to >> price >> duration) {
+        Vertex* v1 = findVertex(g, from);
+        Vertex* v2 = findVertex(g, to);
+        if(v1 && v2){
+            g.addEdge(v1, v2, price, duration);
+        }
+    }
+}
+
 int main(){
-
-    Vertex* sfo = new Vertex("San Francisco");
-    Vertex* nyc = new Vertex("New York");
-    Vertex* rio = new Vertex("Rio De Janeiro");
-    Vertex* paris = new Vertex("Paris");
-    Vertex* joburg = new Vertex("Johannesburg");
-    Vertex* moscow = new Vertex("Moscow");
-    Vertex* sydney = new Vertex("Sydney");
-    Vertex* tokyo = new Vertex("Tokyo");
-    Vertex* beijing = new Vertex("Beijing");
-    // Vertex* london = new Vertex("London");
-
-    Graph g;
-    g.addVertex(sfo);
-    g.addVertex(nyc);
-    g.addVertex(rio);
-    g.addVertex(paris);
-    g.addVertex(joburg);
-    g.addVertex(moscow);
-    g.addVertex(sydney);
-    g.addVertex(tokyo);
-    g.addVertex(beijing);
-
-    g.addEdge(sfo, nyc, 6);
-    g.addEdge(nyc, rio, 13);
-    g.addEdge(nyc, joburg, 14);
-    g.addEdge(nyc, paris, 7);
-    g.addEdge(nyc, moscow, 15);
-    // g.addEdge(nyc, london, 6);
-    // g.addEdge(london, moscow, 6);
-    g.addEdge(nyc, sydney, 40);
-    g.addEdge(rio, paris, 11);
-    g.addEdge(rio, beijing, 18);
-    g.addEdge(paris, sydney, 17);
-    g.addEdge(joburg, tokyo, 16);
-    g.addEdge(joburg, sydney, 11);
-    g.addEdge(sydney, tokyo, 10);
-    g.addEdge(tokyo, beijing, 3);
-    g.addEdge(beijing, moscow, 8);
-
-
     Waypoint* path = g.ucs(sfo, beijing);
 
     if (path){
