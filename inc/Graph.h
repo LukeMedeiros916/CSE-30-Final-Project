@@ -10,6 +10,8 @@
 #include <ostream>
 #include <string>
 
+enum SearchCriteria { COST_PRICE, COST_DURATION };
+
 struct Edge;
 
 struct Vertex {
@@ -50,21 +52,32 @@ struct Waypoint {
     Vertex *vertex;
     ArrayList<Waypoint *> children;
     int partialCost;
-    int weight;
+    int currentWeight;
 
     Waypoint(Vertex *v) {
         parent = nullptr;
         vertex = v;
-        weight = 0;
+        currentWeight = 0;
         partialCost = 0;
     }
 
-    void expand() {
+    void expand(SearchCriteria criteria) {
         for (int i = 0; i < vertex->edgeList.size(); i++) {
             Waypoint *temp = new Waypoint(vertex->edgeList[i]->to);
             temp->parent = this;
-            temp->weight = vertex->edgeList[i]->weight;
-            temp->partialCost = partialCost + vertex->edgeList[i]->weight;
+
+            int weightVal = 0;
+            if (criteria == COST_PRICE) {
+                weightVal = vertex->edgeList[i]->price;
+            }else {
+                weightVal = vertex->edgeList[i]->duration;
+            }
+
+
+
+
+            temp->currentWeight = weightVal;
+            temp->partialCost = partialCost + weightVal;
             children.append(temp);
         }
     }
