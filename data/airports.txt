@@ -1,0 +1,10 @@
+SFO San Francisco
+NYC New York
+RIO Rio De Janeiro
+PAR Paris
+JNB Johannesburg
+DME Moscow
+SYD Sydney
+HND Tokyo
+PEK Beijing
+LHR London
