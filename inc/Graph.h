@@ -222,8 +222,7 @@ struct Graph {
         return nullptr;
     }
 
-    Waypoint *ucs(Vertex *start, Vertex *destination) {
-        std::cout << "Running Uniform Cost Search" << std::endl;
+    Waypoint *ucs(Vertex *start, Vertex *destination, SearchCriteria criteria) {
 
         // Should be a priority queue
         ArrayList<Waypoint *> frontier;
@@ -237,13 +236,13 @@ struct Graph {
         Waypoint *result = nullptr;
 
         while (frontier.size() != 0) {
-            result = frontier.removeLast();
+            Waypoint *result = frontier.removeLast();
 
             if (result->vertex == destination) {
                 return result;
             }
 
-            result->expand();
+            result->expand(criteria);
 
             std::cout << "Expanding " << result->vertex->data << std::endl;
 
@@ -258,8 +257,7 @@ struct Graph {
 
                     // Sort the frontier....
                     int j = frontier.size() - 1;
-                    while (j > 0 && frontier.data[j]->partialCost >
-                                        frontier.data[j - 1]->partialCost) {
+                    while (j > 0 && frontier[j]->partialCost > frontier[j - 1]->partialCost) {
 
                         Waypoint *temp = frontier.data[j];
                         frontier.data[j] = frontier.data[j - 1];
