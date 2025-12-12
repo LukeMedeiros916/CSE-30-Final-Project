@@ -2,13 +2,20 @@
 #define STACK_H
 
 #include <LinkedList.h>
+#include <stdexcept>
 
 template <class T>
 class Stack : public LinkedList<T> {
     void append(T value) {}
     void prepend(T value) {}
-    T removeFirst() {}
-    T removeLast() {}
+
+    T removeFirst() {
+        throw std::logic_error("Cannot call removeFirst on Stack");
+    }
+
+    T removeLast(){
+        throw std::logic_error("Cannot call removeLast on stack");
+    }
     
 public:
     void push(T value) {

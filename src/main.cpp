@@ -17,16 +17,27 @@ void loadGraph(Graph &g) {
     ifstream airportFile("data/airports.txt");
     string code, name_part, line;
 
+    if (!airportFile.is_open()) {
+        cout << "Error: Could not open data/airports.txt" << endl;
+        return;
+    }
+
     while (getline(airportFile, line)) {
         stringstream ss(line);
         ss >> code;
         Vertex* v = new Vertex(code);
         g.addVertex(v);
     }
+airportFile.close();
 
     ifstream flightFile("data/flights.txt");
     string from, to;
     int price, duration;
+
+    if (!flightFile.is_open()) {
+        cout << "Error: Could not open data/flights.txt" << endl;
+        return;
+    }
 
     while (flightFile >> from >> to >> price >> duration) {
         Vertex* v1 = findVertex(g, from);
@@ -35,29 +46,40 @@ void loadGraph(Graph &g) {
             g.addEdge(v1, v2, price, duration);
         }
     }
+flightFile.close();
 }
 
 int main(){
     Graph g;
     loadGraph(g);
 
-    Vertex* sfo = findVertex(g, "SFO");
-    Vertex* beijing = findVertex(g, "PEK");
+    Vertex* start = findVertex(g, "SFO");
+    Vertex* end = findVertex(g, "PEK");
 
-    if(!sfo || !beijing) {
+    if(!start || !end) {
         cout << "Could not find SFO or PEK in the graph." << endl;
         return 0;
     }
 
-    Waypoint* path = g.ucs(sfo, beijing, COST_PRICE);
+    Waypoint* path = g.ucs(start, end, COST_PRICE);
 
     if (path){
         cout << "We found a path" << endl;
+
+        
+        ArrayList<Waypoint*> route;
         Waypoint* temp = path;
         while (temp != nullptr){
-            cout << temp->vertex->data << " " << temp->partialCost << endl;
+            route.append(temp);
             temp = temp->parent;
         }
+
+        for(int i = route.size() - 1; i >= 0; i--) {
+            cout << route[i]->vertex->data;
+            if (i > 0) cout << " -> ";
+        }
+        cout << endl;
+        cout << "Total Cost: " << path->partialCost << endl;
     }
     else{
         cout << "There is no path" << endl;
