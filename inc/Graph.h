@@ -243,11 +243,6 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                                   << ". Was " << worsePath->partialCost << ", now "
                             << result->children[i]->partialCost << std::endl;
 
-                        for (int k = 0; k < frontier.size(); k++) {
-                            if (frontier[k]->parent->vertex->data == result->children[i]->vertex->data) {
-                                frontier[k]->parent = result->children[i];
-                            }
-                        }
 
                         for (int k = 0; k < frontier.size(); k++) {
                             if (frontier[k]->vertex->data == result->children[i]->vertex->data) {

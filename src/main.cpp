@@ -109,7 +109,7 @@ int main(){
             curr = curr->parent;
         }
 
-        for(int i = stack.size()-1; 1 >= 0; i--){
+        for(int i = stack.size()-1; i >= 0; i--){
             cout << stack[i]->vertex->data;
             if (i > 0) cout << " -> ";
         }
