@@ -75,8 +75,8 @@ int main(){
     cout << "Enter Destination Airport Code: ";
     cin >> endCode;
 
-    Vertex* start = findVertex(g, "SFO");
-    Vertex* end = findVertex(g, "PEK");
+    Vertex* start = findVertex(g, startCode);
+    Vertex* end = findVertex(g, endCode);
 
     if(!start || !end) {
         cout << "Invalid airport codes." << endl;
