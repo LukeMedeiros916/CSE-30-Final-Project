@@ -124,7 +124,7 @@ struct Graph {
                 return result;
             }
 
-            result->expand(COST_PRICE);
+            result->expand(COST_PRICE); // Default criteria for BFS
             std::cout << std::endl << "Expanding " << result->vertex->data << std::endl;
 
             for (int i = 0; i < result->children.size(); i++) {
@@ -134,7 +134,7 @@ struct Graph {
                     seen.insert(result->children[i]->vertex->data);
                 }
             }
-
+        }
 
         return nullptr;
     }
@@ -170,7 +170,7 @@ struct Graph {
                     seen.insert(result->children[i]->vertex->data);
                 }
             }
-
+        }
         return nullptr;
     }
 
