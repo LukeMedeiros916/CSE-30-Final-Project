@@ -67,6 +67,11 @@ struct Waypoint {
         partialCost = 0;
     }
 
+    ~Waypoint(){
+        for(int i = 0; i < children.size(); i++)
+        delete children[i];
+    }
+
     void expand(SearchCriteria criteria) {
         for (int i = 0; i < vertex->edgeList.size(); i++) {
             Waypoint *temp = new Waypoint(vertex->edgeList[i]->to);
@@ -147,6 +152,7 @@ struct Graph {
                 }
             }
         }
+        delete first;
 
         return nullptr;
     }
@@ -183,6 +189,7 @@ struct Graph {
                 }
             }
         }
+        delete first;
         return nullptr;
     }
 
@@ -264,7 +271,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                     }
                 }
             }
-}
+}       delete first;
         return nullptr;
     }
 };

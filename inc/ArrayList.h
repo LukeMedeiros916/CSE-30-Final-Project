@@ -58,6 +58,11 @@ public:
     }
 
     ArrayList &operator=(const ArrayList &other) {
+
+        if (this = &other){
+            return *this;
+        }
+
         if (capacity == other.capacity) {
             count = other.count;
 

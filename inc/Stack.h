@@ -5,25 +5,16 @@
 #include <stdexcept>
 
 template <class T>
-class Stack : public LinkedList<T> {
-    void append(T value) {}
-    void prepend(T value) {}
-
-    T removeFirst() {
-        throw std::logic_error("Cannot call removeFirst on Stack");
-    }
-
-    T removeLast(){
-        throw std::logic_error("Cannot call removeLast on stack");
-    }
+class Stack {
+    LinkedList<T> list;
     
 public:
     void push(T value) {
-        LinkedList<T>::prepend(value);
+        list.prepend(value);
     }
 
     T pop() {
-        return LinkedList<T>::removeFirst();
+        if (list.size() == 0) throw
     }
 
     T peek() {

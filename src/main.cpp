@@ -116,6 +116,11 @@ int main(){
         cout << endl;
 
         cout << "Total Cost/Time Metric: " << result->partialCost << endl;
+        Waypoint* root = result;
+        while (root->parent != nullptr) {
+            root = root->parent;
+        }
+        delete root;
     } else {
         cout << "No route exists." << endl;
     }
