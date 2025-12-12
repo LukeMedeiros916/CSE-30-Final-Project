@@ -19,6 +19,12 @@ struct Vertex {
     ArrayList<Edge *> edgeList;
 
     Vertex(std::string data) { this->data = data; }
+
+    ~Vertex() {
+        for(int i = 0; i < edgeList.size(); i++){
+            delete edgeList[i];
+        }
+    }
 };
 
 inline std::ostream &operator<<(std::ostream &os, Vertex *v) {
@@ -102,6 +108,12 @@ struct Graph {
     void addEdge(Vertex *x, Vertex *y, int price, int duration) {
         x->edgeList.append(new Edge(x, y, price, duration));
         y->edgeList.append(new Edge(y, x, price, duration));
+    }
+
+    ~Graph() {
+        for(int i = 0; i < vertices.size(); i++){
+            delete vertices[i];
+        }
     }
 
 
