@@ -59,7 +59,7 @@ public:
 
     ArrayList &operator=(const ArrayList &other) {
 
-        if (this = &other){
+        if (this == &other){
             return *this;
         }
 
