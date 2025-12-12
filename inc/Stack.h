@@ -14,17 +14,19 @@ public:
     }
 
     T pop() {
-        if (list.size() == 0) throw
+        if (list.size() == 0) throw std::logic_error("Stack is empty");
+        return list.removeFirst();
     }
 
     T peek() {
-        return LinkedList<T>::operator[](0);
+        return list[0];
     }
 
     bool isEmpty() {
-        return LinkedList<T>::size() == 0;
+        return list.size() == 0;
     }
 
     friend struct Graph;
 };
+// Test
 #endif
