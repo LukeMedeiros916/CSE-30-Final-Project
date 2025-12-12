@@ -1,4 +1,5 @@
 #include "ArrayList.h"
+#include <cctype>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -74,6 +75,10 @@ int main(){
     cin >> startCode;
     cout << "Enter Destination Airport Code: ";
     cin >> endCode;
+
+    for(int i = 0; 1 < endCode.length(); i++) {
+        endCode[i] = toupper(endCode[i]);
+    }
 
     Vertex* start = findVertex(g, startCode);
     Vertex* end = findVertex(g, endCode);
