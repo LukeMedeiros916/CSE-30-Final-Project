@@ -10,6 +10,7 @@
 #include <ostream>
 #include <string>
 
+// [COMMIT 4/5 ADDITION] Enum for cost selection
 enum SearchCriteria { COST_PRICE, COST_DURATION };
 
 struct Edge;
@@ -23,7 +24,6 @@ struct Vertex {
 
 inline std::ostream &operator<<(std::ostream &os, Vertex *v) {
     os << v->data;
-
     return os;
 }
 
@@ -33,6 +33,7 @@ struct Edge {
     int price;
     int duration;
 
+    // [COMMIT 2 CHANGE] Constructor handles price and duration
     Edge(Vertex *from, Vertex *to, int price, int duration) {
         this->from = from;
         this->to = to;
@@ -43,7 +44,6 @@ struct Edge {
 
 inline std::ostream &operator<<(std::ostream &os, Edge *e) {
     os << "(" << e->from->data << "-> " << e->to->data << ") $ " << e->price << ", " << e->duration << "m";
-
     return os;
 }
 
@@ -61,6 +61,7 @@ struct Waypoint {
         partialCost = 0;
     }
 
+    // [COMMIT 4 CHANGE] Expand now calculates cost based on criteria
     void expand(SearchCriteria criteria) {
         for (int i = 0; i < vertex->edgeList.size(); i++) {
             Waypoint *temp = new Waypoint(vertex->edgeList[i]->to);
@@ -72,9 +73,6 @@ struct Waypoint {
             } else {
                 weightVal = vertex->edgeList[i]->duration;
             }
-
-
-
 
             temp->currentWeight = weightVal;
             temp->partialCost = partialCost + weightVal;
@@ -88,9 +86,7 @@ inline std::ostream &operator<<(std::ostream &os, Waypoint *wp) {
     if (wp->parent != nullptr) {
         p = wp->parent->vertex->data;
     }
-
     os << p << " -> " << wp->vertex->data;
-
     return os;
 }
 
@@ -104,14 +100,12 @@ struct Graph {
         y->edgeList.append(new Edge(y, x, price, duration));
     }
 
-
     Waypoint *bfs(Vertex *start, Vertex *destination) {
         std::cout << "Running Breadth-First Search" << std::endl;
         Queue<Waypoint *> frontier;
         HashTable<std::string> seen;
 
         Waypoint *first = new Waypoint(start);
-
         frontier.enqueue(first);
         seen.insert(first->vertex->data);
 
@@ -124,7 +118,10 @@ struct Graph {
                 return result;
             }
 
+            // [FIX] Pass a default criteria (e.g., PRICE) to satisfy the expand signature
+            // BFS logic does not depend on weight, so the specific criteria doesn't affect the path found
             result->expand(COST_PRICE);
+
             std::cout << std::endl << "Expanding " << result->vertex->data << std::endl;
 
             for (int i = 0; i < result->children.size(); i++) {
@@ -134,19 +131,16 @@ struct Graph {
                     seen.insert(result->children[i]->vertex->data);
                 }
             }
-
-
+        }
         return nullptr;
     }
 
     Waypoint *dfs(Vertex *start, Vertex *destination) {
         std::cout << "Running Depth-First Search" << std::endl;
-
         Stack<Waypoint *> frontier;
         HashTable<std::string> seen;
 
         Waypoint *first = new Waypoint(start);
-
         frontier.push(first);
         seen.insert(first->vertex->data);
 
@@ -159,6 +153,7 @@ struct Graph {
                 return result;
             }
 
+            // [FIX] Pass default criteria
             result->expand(COST_PRICE);
 
             std::cout << std::endl << "Expanding " << result->vertex->data << std::endl;
@@ -170,18 +165,18 @@ struct Graph {
                     seen.insert(result->children[i]->vertex->data);
                 }
             }
-
+        }
         return nullptr;
     }
 
+    // [COMMIT 5 CHANGE] UCS now takes SearchCriteria
     Waypoint *ucs(Vertex *start, Vertex *destination, SearchCriteria criteria) {
-std::cout << "Running Uniform Cost Search" << std::endl;
+        std::cout << "Running Uniform Cost Search" << std::endl;
 
         ArrayList<Waypoint *> frontier;
         HashTable<std::string> seen;
 
         Waypoint *first = new Waypoint(start);
-
         frontier.append(first);
         seen.insert(first->vertex->data);
 
@@ -194,6 +189,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                 return result;
             }
 
+            // [COMMIT 5 CHANGE] Pass the selected criteria
             result->expand(criteria);
 
             std::cout << "Expanding " << result->vertex->data << std::endl;
@@ -203,7 +199,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                     std::cout << "Adding " << result->children[i]->vertex->data << std::endl;
                     frontier.append(result->children[i]);
 
-
+                    // Sort frontier (Descending order by cost so removeLast() gets the min)
                     int j = frontier.size() - 1;
                     while (j > 0 && frontier.data[j]->partialCost > frontier.data[j - 1]->partialCost) {
                         Waypoint *temp = frontier.data[j];
@@ -214,7 +210,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
 
                     seen.insert(result->children[i]->vertex->data);
                 } else {
-
+                    // Handle updating paths to visited nodes if a cheaper path is found
                     Waypoint *worsePath = nullptr;
 
                     for (int k = 0; k < frontier.size(); k++) {
@@ -228,15 +224,17 @@ std::cout << "Running Uniform Cost Search" << std::endl;
 
                     if (worsePath) {
                         std::cout << "Found better path to " << result->children[i]->vertex->data 
-                                  << ". Was " << worsePath->partialCost << ", now "
-                            << result->children[i]->partialCost << std::endl;
+                                  << ". Was " << worsePath->partialCost << ", now " 
+                                  << result->children[i]->partialCost << std::endl;
 
+                        // Reparent logic
                         for (int k = 0; k < frontier.size(); k++) {
                             if (frontier[k]->parent->vertex->data == result->children[i]->vertex->data) {
                                 frontier[k]->parent = result->children[i];
                             }
                         }
 
+                        // Replace
                         for (int k = 0; k < frontier.size(); k++) {
                             if (frontier[k]->vertex->data == result->children[i]->vertex->data) {
                                 delete frontier[k];
@@ -245,6 +243,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                             }
                         }
 
+                        // Re-sort
                         for (int a = 1; a < frontier.size(); a++) {
                             int b = a;
                             while (b > 0 && frontier[b]->partialCost > frontier[b - 1]->partialCost) {
@@ -257,7 +256,7 @@ std::cout << "Running Uniform Cost Search" << std::endl;
                     }
                 }
             }
-}
+        }
         return nullptr;
     }
 };
@@ -266,8 +265,7 @@ inline std::ostream &operator<<(std::ostream &os, const Graph &g) {
     for (int i = 0; i < g.vertices.size(); i++) {
         os << g.vertices[i]->edgeList << std::endl;
     }
-
     return os;
-};
+}
 
 #endif

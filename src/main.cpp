@@ -10,7 +10,7 @@ Vertex* findVertex(Graph& g, string name) {
     for(int i=0; i<g.vertices.size(); i++) {
         if(g.vertices[i]->data == name) return g.vertices[i];
     }
-    retuen nullptr;
+    return nullptr;
 }
 
 void loadGraph(Graph &g) {
@@ -24,7 +24,7 @@ void loadGraph(Graph &g) {
         g.addVertex(v);
     }
 
-    ifstream flightFile('data/flights.txt');
+    ifstream flightFile("data/flights.txt");
     string from, to;
     int price, duration;
 
@@ -38,7 +38,18 @@ void loadGraph(Graph &g) {
 }
 
 int main(){
-    Waypoint* path = g.ucs(sfo, beijing);
+    Graph g;
+    loadGraph(g);
+
+    Vertex* sfo = findVertex(g, "SFO");
+    Vertex* beijing = findVertex(g, "PEK");
+
+    if(!sfo || !beijing) {
+        cout << "Could not find SFO or PEK in the graph." << endl;
+        return 0;
+    }
+
+    Waypoint* path = g.ucs(sfo, beijing, COST_PRICE);
 
     if (path){
         cout << "We found a path" << endl;
