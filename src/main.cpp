@@ -1,3 +1,4 @@
+#include "ArrayList.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -49,40 +50,74 @@ airportFile.close();
 flightFile.close();
 }
 
+void printPath(Waypoint* path) {
+    if (!path) {
+        cout << "No path found." << endl;
+        return;
+    }
+
+    if (path->parent != nullptr) {
+        cout << " (Cost: )" << path->currentWeight << ")";
+    }
+    cout << " -> ";
+}
+
 int main(){
     Graph g;
     loadGraph(g);
+
+    string startCode, endCode;
+    int choice;
+
+    cout << "--- Flight Planner ---" << endl;
+    cout << "Enter Origin Airport Code: ";
+    cin >> startCode;
+    cout << "Enter Destination Airport Code: ";
+    cin >> endCode;
 
     Vertex* start = findVertex(g, "SFO");
     Vertex* end = findVertex(g, "PEK");
 
     if(!start || !end) {
-        cout << "Could not find SFO or PEK in the graph." << endl;
+        cout << "Invalid airport codes." << endl;
         return 0;
     }
 
-    Waypoint* path = g.ucs(start, end, COST_PRICE);
+    cout << "Select Criteria:\n1. Cheapest Price\n2. Shortest Time\n3. Least Stops\nOption: ";
+    cin >> choice;
 
-    if (path){
-        cout << "We found a path" << endl;
+    Waypoint* result = nullptr;
 
-        
-        ArrayList<Waypoint*> route;
-        Waypoint* temp = path;
-        while (temp != nullptr){
-            route.append(temp);
-            temp = temp->parent;
+    if (choice == 1){
+        result = g.ucs(start, end, COST_PRICE);
+        cout << "\nCalculating Cheapest Route..." << endl;
+    } else if (choice == 2) {
+        result = g.ucs(start, end, COST_DURATION);
+        cout << "\nCalculating Fastest Route..." << endl;
+    } else if (choice) {
+        result = g.bfs(start, end);
+        cout << "\nCalculating Route with Least Stops..." << endl;
+    }
+
+    if (result){
+        cout << "Itinerary: ";
+
+        ArrayList<Waypoint*> stack;
+        Waypoint* curr = result;
+        while(curr){
+            stack.append(curr);
+            curr = curr->parent;
         }
 
-        for(int i = route.size() - 1; i >= 0; i--) {
-            cout << route[i]->vertex->data;
+        for(int i = stack.size()-1; 1 >= 0; i--){
+            cout << stack[i]->vertex->data;
             if (i > 0) cout << " -> ";
         }
         cout << endl;
-        cout << "Total Cost: " << path->partialCost << endl;
-    }
-    else{
-        cout << "There is no path" << endl;
+
+        cout << "Total Cost/Time Metric: " << result->partialCost << endl;
+    } else {
+        cout << "No route exists." << endl;
     }
 
     
