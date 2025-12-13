@@ -68,6 +68,8 @@ struct Waypoint {
         vertex = v;
         currentWeight = 0;
         partialCost = 0;
+        accumulatedPrice = 0;
+        accumulatedTime = 0;
     }
 
     ~Waypoint(){
