@@ -60,6 +60,9 @@ struct Waypoint {
     int partialCost;
     int currentWeight;
 
+    int accumulatedPrice;
+    int accumulatedTime;
+
     Waypoint(Vertex *v) {
         parent = nullptr;
         vertex = v;
@@ -77,11 +80,15 @@ struct Waypoint {
             Waypoint *temp = new Waypoint(vertex->edgeList[i]->to);
             temp->parent = this;
 
+            temp->accumulatedPrice = this->accumulatedPrice + vertex->edgeList[i]->price;
+            temp->accumulatedTime = this->accumulatedTime + vertex->edgeList[i]->duration;
+
             int weightVal = 0;
             if (criteria == COST_PRICE) {
                 weightVal = vertex->edgeList[i]->price;
             } else {
                 weightVal = vertex->edgeList[i]->duration;
+                temp->partialCost = this->partialCost + weightVal;
             }
 
 

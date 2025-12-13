@@ -76,7 +76,7 @@ int main(){
     cout << "Enter Destination Airport Code: ";
     cin >> endCode;
 
-    for(int i = 0; 1 < endCode.length(); i++) {
+    for(int i = 0; i < endCode.length(); i++) {
         endCode[i] = toupper(endCode[i]);
     }
 
@@ -120,7 +120,11 @@ int main(){
         }
         cout << endl;
 
-        cout << "Total Cost/Time Metric: " << result->partialCost << endl;
+        cout << "Total Price: $" << result->accumulatedPrice << endl;
+        cout << "Total Time:  " << result->accumulatedTime << "m" << endl;
+
+        int stops = stack.size() - 2; 
+        cout << "Stops:       " << (stops < 0 ? 0 : stops) << endl;
         Waypoint* root = result;
         while (root->parent != nullptr) {
             root = root->parent;
